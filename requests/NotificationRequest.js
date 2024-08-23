@@ -9,9 +9,17 @@ class NotificationRequest {
     ];
   }
     
-    static validateMulticast() {
+  static validateMulticast() {
     return [
-      body('tokens').isArray({ min: 1 }).withMessage('Tokens is required'),
+      body('tokens').isArray({ min: 1 }).withMessage('usersIDs is required'),
+      body('title').notEmpty().withMessage('Title is required'),
+      body('body').notEmpty().withMessage('Body is required')
+    ];
+  }
+
+  static validateUsers() {
+    return [
+      body('usersIDs').isArray({ min: 1 }).withMessage('usersIDs is required'),
       body('title').notEmpty().withMessage('Title is required'),
       body('body').notEmpty().withMessage('Body is required')
     ];

@@ -55,7 +55,7 @@ exports.getUsersTokens = async (usersIDs) => {
  */
 exports.removeToken = async (token) => {
   try {
-    const response = await admin.messaging().unsubscribeFromTopic(token, 'breakingnews');
+    const response = await admin.messaging().unsubscribeFromTopic(token);
     return response;
   } catch (error) {
     throw new Error(error.message);

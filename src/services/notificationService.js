@@ -40,7 +40,7 @@ exports.sendMulticastNotification = async (tokens, title, body) => {
  */
 exports.getUsersTokens = async (usersIDs) => {
   try {
-    const response = await admin.database().ref('localUsers').once('value'); // ref('users') for live and ref('localUsers') for test
+    const response = await admin.database().ref('users').once('value'); // ref('users') for live and ref('localUsers') for test
     return response.val();
   } catch (error) {
     throw new Error(error.message);

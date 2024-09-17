@@ -60,6 +60,7 @@ router.post(
         });
       }
       // If there are tokens, send a multicast notification
+      // remove some
       if (tokens.length > 0) {
         await notificationService.sendMulticastNotification(
           tokens,

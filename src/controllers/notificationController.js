@@ -41,8 +41,6 @@ router.post(
       // Retrieve the FCM tokens for the users with the provided userIDs
       const response = await notificationService.getUsersTokens(databaseRef);
 
-      console.log("=============RESPO" + response);
-
       if (response) {
         // Loop through the userIDs and get their corresponding FCM tokens
         usersIDs.forEach((userID) => {
@@ -61,7 +59,6 @@ router.post(
           error: "No users found",
         });
       }
- console.log("=============TOKEN" + tokens);
       // If there are tokens, send a multicast notification
       if (tokens.length > 0) {
         await notificationService.sendMulticastNotification(

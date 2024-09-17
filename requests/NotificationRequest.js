@@ -1,27 +1,27 @@
-const { body, validationResult } = require('express-validator');
+const { body, validationResult } = require("express-validator");
 
 class NotificationRequest {
-  static validate() {
+  static validateUsersForSender() {
     return [
-      body('token').notEmpty().withMessage('Token is required'),
-      body('title').notEmpty().withMessage('Title is required'),
-      body('body').notEmpty().withMessage('Body is required')
-    ];
-  }
-    
-  static validateMulticast() {
-    return [
-      body('tokens').isArray({ min: 1 }).withMessage('usersIDs is required'),
-      body('title').notEmpty().withMessage('Title is required'),
-      body('body').notEmpty().withMessage('Body is required')
+      body("usersIDs").isArray({ min: 1 }).withMessage("usersIDs is required"),
+      body("title").notEmpty().withMessage("Title is required"),
+      body("body").notEmpty().withMessage("Body is required"),
+      body("firebaseKeyUrl")
+        .notEmpty()
+        .withMessage("firebaseKeyUrl is required"),
+      body("databaseURL").notEmpty().withMessage("databaseURL is required"),
+      body("databaseRef").notEmpty().withMessage("databaseRef is required"),
     ];
   }
 
-  static validateUsers() {
+  static validateUsersForRemover() {
     return [
-      body('usersIDs').isArray({ min: 1 }).withMessage('usersIDs is required'),
-      body('title').notEmpty().withMessage('Title is required'),
-      body('body').notEmpty().withMessage('Body is required')
+      body("usersIDs").isArray({ min: 1 }).withMessage("usersIDs is required"),
+      body("firebaseKeyUrl")
+        .notEmpty()
+        .withMessage("firebaseKeyUrl is required"),
+      body("databaseURL").notEmpty().withMessage("databaseURL is required"),
+      body("databaseRef").notEmpty().withMessage("databaseRef is required"),
     ];
   }
 

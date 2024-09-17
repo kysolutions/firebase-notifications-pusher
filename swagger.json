@@ -1,0 +1,329 @@
+{
+  "swagger": "2.0",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  
+  "info": {
+    "title": "KY SOLUTIONS : Notifications Pusher API",
+   "description": "API for sending notifications to users via Firebase Cloud Messaging (FCM).\n\n**SETUP FIREBASE**:\n\n1. Go to the Firebase Console (https://console.firebase.google.com/) and create a new project or select an existing one.\n2. In the left sidebar, click on 'Realtime Database' under the 'Build' section.\n3. Click 'Create Database' if you haven't set one up yet.\n4. Choose 'Start in test mode' for development purposes. Remember to set up proper security rules before going to production.\n5. Once created, you'll see the URL of your database. This is the '**databaseURL**' you'll need to provide when using this API.\n6. To structure your data for this API, create a node named 'users' (or any name you prefer, which will be your '**databaseRef**').\n7. Under the 'users' node, create child nodes for each user ID, and under each user ID, create a 'fcmTokens' object to store the user's FCM tokens.\n8. Go to Project Settings (gear icon) > Service Accounts > Generate new private key. This will download a JSON file, which is your '**firebaseKeyUrl**'.\n\n**Note**: Ensure you keep your Firebase configuration and service account key secure and do not expose them publicly.",
+    "version": "1.2.0",
+    "contact": {
+      "name": "KY SOLUTIONS",
+      "url": "https://ky-solutions.com",
+      "email": "contact@ky-solutions.fr"
+    },
+    "x-firebase-setup": {
+      "steps": [
+        {
+          "step": 1,
+          "description": "Go to the Firebase Console (https://console.firebase.google.com/) and create a new project or select an existing one."
+        },
+        {
+          "step": 2,
+          "description": "In the left sidebar, click on 'Realtime Database' under the 'Build' section."
+        },
+        {
+          "step": 3,
+          "description": "Click 'Create Database' if you haven't set one up yet."
+        },
+        {
+          "step": 4,
+          "description": "Choose 'Start in test mode' for development purposes. Remember to set up proper security rules before going to production."
+        },
+        {
+          "step": 5,
+          "description": "Once created, you'll see the URL of your database. This is the 'databaseURL' you'll need to provide when using this API."
+        },
+        {
+          "step": 6,
+          "description": "To structure your data for this API, create a node named 'users' (or any name you prefer, which will be your 'databaseRef')."
+        },
+        {
+          "step": 7,
+          "description": "Under the 'users' node, create child nodes for each user ID, and under each user ID, create a 'fcmTokens' object to store the user's FCM tokens."
+        },
+        {
+          "step": 8,
+          "description": "Go to Project Settings (gear icon) > Service Accounts > Generate new private key. This will download a JSON file, which is your 'firebaseKeyUrl'."
+        }
+      ],
+      "note": "Ensure you keep your Firebase configuration and service account key secure and do not expose them publicly."
+    }
+  },
+  "produces": [
+    "application/json"
+  ],
+  "host": "localhost:3000",
+  "basePath": "/notifications",
+  "paths": {
+    "/users": {
+      "post": {
+        "x-swagger-router-controller": "notificationController",
+        "operationId": "sendNotifications",
+        "tags": [
+          "Notifications"
+        ],
+        "description": "Sends notifications to a list of users by retrieving their FCM tokens and sending a multicast notification.",
+        "schema": {
+              "$ref": "#/definitions/Users"
+            },
+        "parameters": [
+          {
+            "name": "usersIDs",
+            "in": "body",
+            "description": "Array of user IDs for which FCM tokens will be retrieved.",
+            "required": true,
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "usersIDs": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Title of the notification to be sent."
+                    },
+                    "body": {
+                        "type": "string",
+                        "description": "Body/content of the notification to be sent."
+                    },
+                    "firebaseKeyUrl": {
+                        "type": "string",
+                        "description": "URL or local path to the Firebase service account key."
+                    },
+                    "databaseURL": {
+                        "type": "string",
+                        "description": "URL to the Firebase Realtime Database."
+                    },
+                    "databaseRef": {
+                        "type": "string",
+                        "description": "Reference to the database node where user tokens are stored."
+                    }
+              },
+              "required": [
+                "usersIDs",
+                "title",
+                "body",
+                "firebaseKeyUrl",
+                "databaseURL",
+                "databaseRef"
+            ]
+            }
+        }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response indicating that notifications were sent.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Notifications sent successfully"
+                },
+                "response": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "token1",
+                    "token2"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Invalid request parameters"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "ERROR"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+    },
+     "delete": {
+    "tags": [
+      "Notifications"
+    ],
+    "summary": "Remove user FCM tokens",
+    "description": "Removes FCM tokens for the specified user IDs by unsubscribing them from the 'users' topic in Firebase Cloud Messaging.",
+    "operationId": "removeTokens",
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ],
+    "parameters": [
+      {
+        "in": "body",
+        "name": "body",
+        "description": "List of user IDs whose FCM tokens will be removed, along with Firebase configurations.",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "usersIDs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Array of user IDs whose tokens will be unsubscribed."
+            },
+            "firebaseKeyUrl": {
+              "type": "string",
+              "description": "URL or local path to the Firebase service account key."
+            },
+            "databaseURL": {
+              "type": "string",
+              "description": "URL to the Firebase Realtime Database."
+            },
+            "databaseRef": {
+              "type": "string",
+              "description": "Reference to the database node where user tokens are stored."
+            }
+          },
+          "required": [
+            "usersIDs",
+            "firebaseKeyUrl",
+            "databaseURL",
+            "databaseRef"
+          ]
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Tokens removed successfully",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": true
+            },
+            "message": {
+              "type": "string",
+              "example": "Tokens removed successfully"
+            },
+            "response": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "token1",
+                "token2"
+              ]
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Invalid request parameters",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": false
+            },
+            "message": {
+              "type": "string",
+              "example": "Invalid request parameters"
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal server error",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": false
+            },
+            "message": {
+              "type": "string",
+              "example": "ERROR"
+            },
+            "error": {
+              "type": "string",
+              "example": "Detailed error message"
+            }
+          }
+        }
+      }
+    }
+  }
+    }
+   
+},
+"definitions": {
+    "Users": {
+        "type": "object",
+        "properties": {
+            "ID": {
+                "type": "object",
+                "properties": {
+                    "fcmTokens": {
+                    "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "example": {
+                            "-O5x-Cu0OgFkuY7jM7Mu": "dogW0ZSHXP4nXFmfnXS_z-:APA91bGV1xJI1aAwMy0JoEi-Pwd-MAarCkrcMeATopnkIeou1sJIDz4byvcQ-0-uCuPdcBwkqdLv3C5SypXIPmsISWCHRbTzcrRRiCshDoECgFN4Fwj4gMK9HfQ57Jq9GJkHbZSuLuT8",
+                            "-O5x-XPXbFByfXCvM4P4": "dogW0ZSHXP4nXFmfnXS_z-:APA91bHHl-cxdIyfuH1UW-UNyJG_13cS9Qnv6qMMpXmLTj7VH9De3BVDkynoDRRns2TSXYfBiLmko7xHSdz02j7zhaiMJlv3VrygrAeUXE8WMGC7IUnDhxn_jwXyzpPOC7vKOlC-d60U"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+}
+
